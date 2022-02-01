@@ -1,4 +1,6 @@
-import Potato from './Potato';
+function Potato() {
+  return <h1>감자 좋아</h1>;
+}
 
 function App() {
   return (
