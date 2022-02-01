@@ -1,12 +1,13 @@
-function Potato() {
-  return <h1>감자 좋아</h1>;
+function Food(props) {
+  console.log(props);
+  return <h1>{ props.fav } 좋아</h1>;
 }
 
 function App() {
   return (
     <div>
       <h1>안녕</h1>
-      <Potato />
+      <Food fav="김치" />
     </div>
   )
 }
