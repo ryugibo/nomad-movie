@@ -2,54 +2,37 @@ import { useEffect, useState } from "react";
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const [coins, setCoins] = useState([]);
-  const [selectedCoin, setSelectedCoin] = useState();
-  const [usd, setUsd] = useState("");
+  const [movies, setMovies] = useState([]);
+  const getMovies = async () => {
+    const json = await (
+      await fetch(
+        `https://yts.mx/api/v2/list_movies.json?minimum_rating=8.8&sort_by=year`
+      )
+    ).json();
+    setMovies(json.data.movies);
+    setLoading(false);
+  };
   useEffect(() => {
-    fetch("https://api.coinpaprika.com/v1/tickers")
-      .then((response) => response.json())
-      .then((json) => {
-        setSelectedCoin(json[0].id);
-        setCoins(json);
-        setLoading(false);
-      });
+    getMovies();
   }, []);
-  const onChangeUsd = (event) => {
-    setUsd(event.target.value);
-  };
-  const onChangeSelect = (event) => {
-    setSelectedCoin(event.target.value);
-  };
   return (
     <div>
-      <h1>The Coins!{loading ? "" : ` (${coins.length})`}</h1>
       {loading ? (
-        <strong>Loading...</strong>
+        <h1>Loading...</h1>
       ) : (
         <div>
-          <select onChange={onChangeSelect}>
-            {coins.map((coin) => {
-              return (
-                <option key={coin.id} value={coin.id}>
-                  {coin.name} ({coin.symbol}) : ${coin.quotes.USD.price} USD
-                </option>
-              );
-            })}
-          </select>
-          <input
-            value={usd}
-            onChange={onChangeUsd}
-            type="number"
-            placeholder="input usd"
-          />
-          {"USD "} <br />
-          {usd === "" ? null : (
-            <div>
-              {usd /
-                coins.find((coin) => coin.id === selectedCoin).quotes.USD.price}
-              &nbsp;{coins.find((coin) => coin.id === selectedCoin).symbol}
+          {movies.map((movie) => (
+            <div key={movie.id}>
+              <img src={movie.medium_cover_image} />
+              <h2>{movie.title}</h2>
+              <p>{movie.summary}</p>
+              <ul>
+                {movie.genres.map((genre) => (
+                  <li key={genre}>{genre}</li>
+                ))}
+              </ul>
             </div>
-          )}
+          ))}
         </div>
       )}
     </div>
